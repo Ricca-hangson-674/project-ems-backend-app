@@ -1,0 +1,39 @@
+services:
+  maven:
+    image: maven:3.8.4-eclipse-temurin-17
+    working_dir: /ems-backend-app
+    command: /bin/sh -c "tail -f /dev/null" # Keeps the container running
+    environment:
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
+    user: "${USER_ID}:${GROUP_ID}"
+    volumes:
+      - ./ems-backend-app:/ems-backend-app
+      - ./.m2:/root/.m2
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root1234
+      POSTGRES_DB: ems_database_default
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8088:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@nrh.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin12345
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+
+# $ chown -R 5050:5050 ./pgadmin

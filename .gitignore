@@ -1,0 +1,6 @@
+/.m2
+/pgadmin
+/postgresql
+/ems-backend-app/target
+
+.env
